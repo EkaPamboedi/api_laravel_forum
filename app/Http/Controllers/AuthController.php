@@ -18,7 +18,7 @@ class AuthController extends Controller
   {
       // $this->middleware('auth:api', ['except' => ['login']]);
       $this->middleware('auth:api', ['except' => ['login','register']]);
-
+      // return auth()->shouldUse('api');
   }
 
   /**
@@ -39,7 +39,6 @@ class AuthController extends Controller
 
      if ($validator->fails()) {
        return response()->json([$validator->messages()]);
-       // code...
      }
 
      $user = User::create([

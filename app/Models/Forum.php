@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Forum extends Model
 {
     use HasFactory;
+   public $table = "forum";
     protected $guarded = ['id'];
 
 
@@ -19,6 +20,6 @@ public function user()
 }
 public function comments()
 {
-  return$this->hasMany(ForumComment::class)
+  return$this->hasMany(ForumComment::class);
 }
 }

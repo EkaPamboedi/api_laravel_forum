@@ -18,20 +18,18 @@ use App\Http\Controllers\RegisterController;
 */
 Route::group([
   'middleware' => 'api',
-   'prefix' => 'auth',
+   // 'prefix' => 'auth',
 
  ], function($router){
-  Route::post('login',[AuthController::class, 'login'])->name('login');
-  Route::post('register',[AuthController::class, 'register'])->name('register');
-  // Route::POST('refresh',[AuthController::class, 'refresh'])->name('refresh');
-  // Route::POST('me', [AuthController::class, 'me'])->name('me');
-  // Route::POST('logout',[AuthController::class, 'logout'])->name('logout');
 
-    // Route::post('register', 'AuthController@register');
-    // Route::post('login', 'AuthController@login');
-    // Route::post('logout', 'AuthController@logout');
-    // Route::post('refresh', 'AuthController@refresh');
-    // Route::post('me', 'AuthController@me');
+   route::prefix('auth')->group(function(){
+     Route::post('login',[AuthController::class, 'login'])->name('login');
+     Route::post('register',[AuthController::class, 'register'])->name('register');
+     Route::POST('me', [AuthController::class, 'me'])->name('me');
+     Route::POST('refresh',[AuthController::class, 'refresh'])->name('refresh');
+     Route::POST('logout',[AuthController::class, 'logout'])->name('logout');
+   });
 
+   route::apiResource('forum', 'ForumController');
 
 });
