@@ -25,7 +25,14 @@ class ForumController extends Controller
         return response()->json($validator->messages());
       }
 
-      $user = $this->getAuthUser();
+      // $user = $this->getAuthUser();
+      try {
+          $user=  auth()->userorFail();
+      } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
+
+        return response()->json(['message' => 'Not authenticated, you need to login first']);
+
+      }
 
       $user->forums()->create([
         'title' => request('title'),
@@ -56,16 +63,17 @@ class ForumController extends Controller
        ];
      }
 
-     private function getAuthUser()
-     {
-       try {
-          return $user=  auth()->userorFail();
-       } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
-
-         return response()->json(['message' => 'Not authenticated, you need to login first']);
-
-       }
-     }
+     // too early to do reafactoring
+     // private function getAuthUser()
+     // {
+     //   try {
+     //       $user=  auth()->userorFail();
+     //   } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
+     //
+     //     return response()->json(['message' => 'Not authenticated, you need to login first']);
+     //
+     //   }
+     // }
 
     public function update(Request $request, $id)
     {
@@ -78,10 +86,22 @@ class ForumController extends Controller
         return response()->json($validator->messages());
       }
 
-      $user = $this->getAuthUser();
+      // $user = $this->getAuthUser(); too early to do reafactoring
+      try {
+          $user=  auth()->userorFail();
+      } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
 
-       Forum::find($id)
-       ->update([
+        return response()->json(['message' => 'Not authenticated, you need to login first']);
+
+      }
+
+      $forum = Forum::find($id);
+
+      if ($user->id != $forum->user_id) {
+        abort(403);
+      }
+
+       $forum->update([
                   'title' => request('title'),
                   'body'  => request('body'),
                   'category'  => request('category')
