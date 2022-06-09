@@ -19,20 +19,10 @@ class ForumController extends Controller
 
     public function store(Request $request)
     {
-      $validator = Validator::make($request->all(), $this->getValidationAttribute());
-
-      if($validator->fails()) {
-        return response()->json($validator->messages());
-      }
-
-      // $user = $this->getAuthUser();
-      try {
-          $user=  auth()->userorFail();
-      } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
-
-        return response()->json(['message' => 'Not authenticated, you need to login first']);
-
-      }
+      //#Validator1st
+      // $validator = Validator::make($request->all(), $this->getValidationAttribute());
+      $this->validateRequest();
+      $user = $this->getAuthUser();
 
       $user->forums()->create([
         'title' => request('title'),
@@ -54,53 +44,17 @@ class ForumController extends Controller
 
     }
 
-     private function getValidationAttribute()
-     {
-       return [
-          'title' => 'required|min:5',
-          'body' => 'required|min:10',
-          'category' => 'required',
-       ];
-     }
-
-     // too early to do reafactoring
-     // private function getAuthUser()
-     // {
-     //   try {
-     //       $user=  auth()->userorFail();
-     //   } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
-     //
-     //     return response()->json(['message' => 'Not authenticated, you need to login first']);
-     //
-     //   }
-     // }
 
     public function update(Request $request, $id)
     {
-      //dibuat jadi satu fungsi biar gk ngulang2
 
       // check owp
-      $validator = Validator::make($request->all(), $this->getValidationAttribute());
-
-      if($validator->fails()) {
-        return response()->json($validator->messages());
-      }
-
-      // $user = $this->getAuthUser(); too early to do reafactoring
-      try {
-          $user=  auth()->userorFail();
-      } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
-
-        return response()->json(['message' => 'Not authenticated, you need to login first']);
-
-      }
-
+      // #Validator1st
+      // $validator = Validator::make($request->all(), $this->getValidationAttribute());
+      $this->validateRequest();
+      $user = $this->getAuthUser();
       $forum = Forum::find($id);
-
-      if ($user->id != $forum->user_id) {
-        abort(403);
-      }
-
+      $this->checkOwnership($user->id, $forum->user_id);
        $forum->update([
                   'title' => request('title'),
                   'body'  => request('body'),
@@ -111,6 +65,60 @@ class ForumController extends Controller
 
     public function destroy($id)
     {
+      $forum = Forum::find($id);
+      $user = $this->getAuthUser();
 
+      $this->checkOwnership($user->id, $forum->user_id);
+      $forum->delete();
+      return response()->json(['message' => 'Successfully Deleted ']);
     }
+
+    //dibuat jadi satu fungsi biar gk ngulang2
+    private function getAuthUser()
+    {
+      try {
+          return  $user=  auth()->userOrFail();
+      } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
+
+        response()->json(['message' => 'Not authenticated, you need to login first'])->send();
+        // send disini untuk mengirim metode keluar program
+        exit;
+        // karna pada laravel send tidak dapat keluar dari sistem begitu saja, maklanya menggunakan metode "exit" setelah "send" agar dapat keluar sistem.
+      }
+    }
+
+    // #Validator1st cara pertama
+    private function getValidationAttribute()
+    {
+      return [
+         'title' => 'required|min:5',
+         'body' => 'required|min:10',
+         'category' => 'required',
+      ];
+    }
+    private function validateRequest()
+    {
+      $validator = Validator::make(request()->all(),
+        [
+           'title' => 'required|min:5',
+           'body' => 'required|min:10',
+           'category' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+
+        response()->json($validator ->messages())->send();
+        exit;
+        }
+    }
+
+    private function checkOwnership($authUser, $owner)
+    {
+      if ($authUser != $owner) {
+        
+        response()->json(['message' => 'Not Authorized '], 403)->send();
+        exit;
+      }
+    }
+
 }
