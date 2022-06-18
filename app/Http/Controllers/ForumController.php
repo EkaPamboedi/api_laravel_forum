@@ -10,6 +10,7 @@ use App\Http\Controllers\AuthUserTrait;
 use Illuminate\Support\Str;
 use App\Models\Forum;
 use App\Models\ForumComments;
+use App\Http\Resources\ForumResources;
 
 
 class ForumController extends Controller
@@ -22,7 +23,10 @@ class ForumController extends Controller
 
     public function index()
     {
-      return Forum::with('user:id,username', 'comments:user_id,body')->get();
+      // return Forum::with('user', 'comments:user_id,body')->paginate(4);
+      return ForumResources::collection(
+        Forum::with('user', 'comments:user_id,body')->paginate(4)
+    );
     }
 
     public function store(Request $request)
@@ -48,8 +52,10 @@ class ForumController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {
-      return Forum::with('user:id,username', 'comments.user:id,username')->find($id);
+    { 
+      return new ForumResources  ( 
+        Forum::with('user', 'comments.user')->find($id)
+      );
     }
 
 
