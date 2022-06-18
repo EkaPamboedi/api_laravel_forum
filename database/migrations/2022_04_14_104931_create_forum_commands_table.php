@@ -13,12 +13,11 @@ class CreateForumCommandsTable extends Migration
      */
     public function up()
     {
-        Schema::create('forum_commands', function (Blueprint $table) {
+        Schema::create('forum_comments', function (Blueprint $table) {
             $table->id();
+            $table->string('body');
             $table->UnsignedBigInteger('forum_id');
             $table->UnsignedBigInteger('user_id');
-            $table->string('body');
-            $table->string('category');
             $table->timestamps();
 
             $table->foreign('forum_id')->references('id')->on('forum');
