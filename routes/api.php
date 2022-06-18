@@ -4,7 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ForumController;
-use App\Http\Controllers\RegisterController;
+// use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\UserController;
 
 
 /*
@@ -31,7 +32,7 @@ Route::group([
      Route::POST('logout',[AuthController::class, 'logout'])->name('logout');
     });
     
-    
+    Route::GET('user/@{username}',[UserController::class, 'show']);
     
     Route::GET('forum/tag/{tag}',[ForumController::class, 'FilterTag'])->name('FilterTag');
    
