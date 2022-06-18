@@ -88,8 +88,10 @@ class AuthController extends Controller
    * @return \Illuminate\Http\JsonResponse
    */
   public function refresh()
-  {
-      return $this->respondWithToken(auth()->refresh());
+  {     
+    //  refresh(true ,true); true yang pertaman untuk membuat kadaluarsa token yang lama,
+    //  true ke 2 untuk membuat token baru
+      return $this->respondWithToken(auth()->refresh(true, true));
   }
 
   /**
