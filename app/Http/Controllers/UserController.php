@@ -9,6 +9,14 @@ class UserController extends Controller
 {
     public function show($username)
     {
-        return User::where('username', $username)->select('username','created_at')->first();
+        return User::where('username', $username)
+                   ->select('username','created_at')->first();
     }   
+
+    public function getActivity($username)
+    {
+        return User::where('username', $username)
+                    ->with('forums','forumComments')->first();
+        
+    }
 }

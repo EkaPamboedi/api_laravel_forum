@@ -33,6 +33,7 @@ Route::group([
     });
     
     Route::GET('user/@{username}',[UserController::class, 'show']);
+    Route::GET('user/@{username}/activity',[UserController::class, 'getActivity']);
     
     Route::GET('forum/tag/{tag}',[ForumController::class, 'FilterTag'])->name('FilterTag');
    
