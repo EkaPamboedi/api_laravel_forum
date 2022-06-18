@@ -24,10 +24,11 @@ use Illuminate\Support\Facades\Auth;
       }
     }
 
-    private function checkOwnership($authUser, $owner)
+    private function checkOwnership($owner)
     {
-      if ($authUser != $owner) {
 
+      $user = $this->getAuthUser();
+      if ($user->id  != $owner) {
         response()->json(['message' => 'Not Authorized '], 403)->send();
         exit;
       }

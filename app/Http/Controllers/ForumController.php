@@ -6,15 +6,23 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\AuthUserTrait;
 use Illuminate\Support\Str;
 use App\Models\Forum;
+use App\Models\ForumComments;
 
 
 class ForumController extends Controller
 {
+  use AuthUserTrait;
+  public function _construct()
+  {
+    return auth()->shouldUse('api');
+  }
+
     public function index()
     {
-      return Forum::with('user:id,username')->get();
+      return Forum::with('user:id,username', 'comments:user_id,body')->get();
     }
 
     public function store(Request $request)
@@ -41,7 +49,7 @@ class ForumController extends Controller
      */
     public function show($id)
     {
-
+      return Forum::with('user:id,username', 'comments.user:id,username')->find($id);
     }
 
 
@@ -52,9 +60,11 @@ class ForumController extends Controller
       // #Validator1st
       // $validator = Validator::make($request->all(), $this->getValidationAttribute());
       $this->validateRequest();
-      $user = $this->getAuthUser();
+      // $user = $this->getAuthUser(); getAuthUser nya dilakukan di AuthUserTrait
       $forum = Forum::find($id);
-      $this->checkOwnership($user->id, $forum->user_id);
+
+      $this->checkOwnership($forum->user_id);
+
        $forum->update([
                   'title' => request('title'),
                   'body'  => request('body'),
@@ -66,25 +76,9 @@ class ForumController extends Controller
     public function destroy($id)
     {
       $forum = Forum::find($id);
-      $user = $this->getAuthUser();
-
-      $this->checkOwnership($user->id, $forum->user_id);
+      $this->checkOwnership($forum->user_id);
       $forum->delete();
       return response()->json(['message' => 'Successfully Deleted ']);
-    }
-
-    //dibuat jadi satu fungsi biar gk ngulang2
-    private function getAuthUser()
-    {
-      try {
-          return  $user=  auth()->userOrFail();
-      } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
-
-        response()->json(['message' => 'Not authenticated, you need to login first'])->send();
-        // send disini untuk mengirim metode keluar program
-        exit;
-        // karna pada laravel send tidak dapat keluar dari sistem begitu saja, maklanya menggunakan metode "exit" setelah "send" agar dapat keluar sistem.
-      }
     }
 
     // #Validator1st cara pertama
@@ -110,15 +104,6 @@ class ForumController extends Controller
         response()->json($validator ->messages())->send();
         exit;
         }
-    }
-
-    private function checkOwnership($authUser, $owner)
-    {
-      if ($authUser != $owner) {
-        
-        response()->json(['message' => 'Not Authorized '], 403)->send();
-        exit;
-      }
     }
 
 }
