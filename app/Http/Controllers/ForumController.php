@@ -58,6 +58,12 @@ class ForumController extends Controller
       );
     }
 
+    public function FilterTag($tag)
+    {
+      return ForumResources::collection(
+          Forum::with('user')->where('category', $tag)->paginate(3)
+      );
+    }
 
     public function update(Request $request, $id)
     {
@@ -96,6 +102,7 @@ class ForumController extends Controller
          'category' => 'required',
       ];
     }
+
     private function validateRequest()
     {
       $validator = Validator::make(request()->all(),
