@@ -31,5 +31,6 @@ Route::group([
    });
 
    route::apiResource('forum', 'ForumController');
-
+   route::apiResource('forum.comments', 'ForumCommentController');
+   //forums/{id_forum}/comments/{id_comment}
 });
