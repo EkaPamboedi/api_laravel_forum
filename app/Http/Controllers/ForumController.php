@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Forum;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\AuthUserTrait;
 use Illuminate\Support\Str;
-use App\Models\Forum;
-use App\Models\ForumComments;
 use App\Http\Resources\ForumResources;
 
 
