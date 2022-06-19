@@ -16,6 +16,10 @@ class RegisterController extends Controller
        'password' => 'required',
     ]);
 
+    if($validator->fails()){
+      return response()->json($validator->messages(), 422);
+    }
+
     $user = User::create([
         'email'     => request('email'),
         'username' => request('username'),
