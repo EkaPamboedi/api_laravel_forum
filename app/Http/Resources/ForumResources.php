@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResources extends JsonResource
+class ForumResources extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,14 +16,15 @@ class UserResources extends JsonResource
     {
         // return parent::toArray($request);
         return [
-            'id'=>$this->id,
-            'username'=>$this->username,
-            'created_at' =>$this->created_at,
-            'activity ' => [
-                'forums' => $this->forums,
-                'comment' => $this->forumComments
-        ]
+            'id' => $this->id,
+            'title' => ucfirst($this->title),
+            'body' => $this->body,
+            'slug' => $this->slug,
+            'category' => $this->category,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'user' => $this->user,
+            'comment' => $this->comment,
         ];
-
     }
 }

@@ -1,22 +1,22 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\User;
 
+use App\Http\Resources\UserResources;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
     public function show($username)
     {
-        return User::where('username', $username)
-                   ->select('username','created_at')->first();
+        return new UserResources(User::where('username', $username)->first());
     }   
 
     public function getActivity($username)
     {
-        return User::where('username', $username)
-                    ->with('forums','forumComments')->first();
-        
+        return new UserResources (User::where('username', $username)
+                    ->with('forums','forumComments')->first()
+                );
     }
 }
