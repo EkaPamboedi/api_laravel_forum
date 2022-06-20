@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\AuthUserTrait;
 use Illuminate\Support\Str;
 use App\Http\Resources\ForumResources;
+use App\Http\Resources\ForumResource;
 
 
 class ForumController extends Controller
@@ -21,9 +22,9 @@ class ForumController extends Controller
     public function index()
     {
       // return Forum::with('user', 'comments:user_id,body')->paginate(4);
-      return ForumResources::collection(
-        Forum::with('user', 'comments:user_id,body')->paginate(4)
-    );
+      return ForumResource::collection(
+        // Forum::with('user', 'comments:user_id,body')->paginate(4));
+        Forum::withCount('comments')->paginate(4));
     }
 
     public function store(Request $request)

@@ -2,9 +2,10 @@
 
 namespace App\Http\Resources;
 
+use Hamcrest\Text\SubstringMatcher;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ForumResources extends JsonResource
+class ForumResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,13 +19,12 @@ class ForumResources extends JsonResource
         return [
             'id' => $this->id,
             'title' => ucfirst($this->title),
-            'body' => $this->body,
+            'body' => Substr($this->body),
             'slug' => $this->slug,
             'category' => $this->category,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'user' => $this->user,
-            'comments' => $this->comments,
+            'comment_count' => $this->comments_count,
         ];
     }
 }

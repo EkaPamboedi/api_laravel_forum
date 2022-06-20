@@ -37,7 +37,7 @@ Route::group([
     
     Route::GET('forum/tag/{tag}',[ForumController::class, 'FilterTag'])->name('FilterTag');
    
-   route::apiResource('forum', 'ForumController');
+   route::apiResource('forums', 'ForumController');
    route::apiResource('forum.comments', 'ForumCommentController');
    //forums/{id_forum}/comments/{id_comment}
 });
